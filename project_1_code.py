@@ -6,6 +6,7 @@ Created on Tue Oct 22 15:38:45 2024
 """
 
 import pandas as pd
+import numpy as np
 #pd.reset_option('all')
 
 """
@@ -156,12 +157,12 @@ Question 8
 Find the year with the highest average rating?
 
 python output
-2006
+2007
 """
 
 average_ratings = df_clean.groupby('Year')['Rating'].mean()
-average_ratings_1dec = average_ratings.round(1)
-#print(average_ratings_1dec)
+average_ratings_1dec = average_ratings.round(6)
+print(average_ratings_1dec)
 """
 2006    7.1
 2007    7.1
@@ -189,7 +190,7 @@ Question 9
 What is the percentage increase in number of movies made between 2006 and 2016?
 
 python output
-85.18518518518519
+575.0
 """
 #Find movies made in 2006 and 2016
 count_2006 = len(df_clean[df_clean['Year'] == 2006])
@@ -200,7 +201,7 @@ count_2016 = len(df_clean[df_clean['Year'] == 2016])
 #297
 
 #percentage increase
-percentage_increase = (count_2016-count_2006)/count_2016 * 100
+percentage_increase = (count_2016-count_2006)/count_2006 * 100
 #print(percentage_increase)
 
 
@@ -209,7 +210,65 @@ Question 10
 Find the most common actor in all the movies?
 
 Note, the "Actors" column has multiple actors names. You must find a way to search for the most common actor in all the movies.
+
+python output
+Mark Wahlberg
 """
+
+df_clean['Actors'] = df_clean['Actors'].apply(lambda x: x.split(', '))
+
+np_actors = np.array(df_clean['Actors'])
+
+flattened_actors = [actor for sublist in np_actors for actor in sublist]
+
+np_flattened_actors = np.array(flattened_actors)
+
+unique_actors, counts = np.unique(np_flattened_actors, return_counts=True)
+
+most_frequent_index = np.argmax(counts)
+most_frequent_actor = unique_actors[most_frequent_index]
+most_frequent_count = counts[most_frequent_index]
+
+#print(most_frequent_actor)
+
+
+"""
+Question 11
+How many unique genres are there in the dataset?
+
+Note, the "Genre" column has multiple genres per movie. You must find a way to identify them individually.
+
+python output
+20
+"""
+
+df_clean['Genre'] = df_clean['Genre'].apply(lambda x: x.split(','))
+
+np_genre = np.array(df_clean['Genre'])
+
+flattened_genre = [genre for sublist in np_genre for genre in sublist]
+
+np_flattened_genre = np.array(flattened_genre)
+
+unique_genre = np.unique(np_flattened_genre)
+#print(len(unique_genre))
+
+
+"""
+# Step 1: Flatten the array of actors
+flattened_actors = np.concatenate(np_actors)
+
+# Step 2: Count occurrences of each actor
+unique_actors, counts = np.unique(flattened_actors, return_counts=True)
+
+# Step 3: Find the most famous actor (the one with the highest count)
+most_famous_actor_index = np.argmax(counts)
+most_famous_actor = unique_actors[most_famous_actor_index]
+most_famous_actor_count = counts[most_famous_actor_index]
+
+print(f"The most famous actor is: {most_famous_actor} with {most_famous_actor_count} appearances.")
+"""
+
 
 """
 Question 11
@@ -238,7 +297,7 @@ Data columns (total 12 columns):
  2   Genre               1000 non-null   object 
  3   Description         1000 non-null   object 
  4   Director            1000 non-null   object 
- 5   Actors              1000 non-null   object 
+ 5   c             1000 non-null   object 
  6   Year                1000 non-null   int64  
  7   Runtime (Minutes)   1000 non-null   int64  
  8   Rating              1000 non-null   float64
